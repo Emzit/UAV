@@ -1,0 +1,16 @@
+# Local blue-team run (rescue)
+# bombs_file injected per run by CLI
+# Output: state recording (.npz) only, no video.
+
+stat_saving_enabled: false
+state_recording_enabled: true
+video_capture_enabled: false
+exploration_threshold_for_time_bonus: 90
+
+evaluation_plan:
+  - map_name: Map01
+    team_mode: rescue
+    nb_rounds: 2
+    config_weight: 1
+    number_drones: 10
+    zones_config: []

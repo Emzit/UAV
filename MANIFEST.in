@@ -1,0 +1,3 @@
+# Exclure tout le répertoire "tests"
+prune tests
+

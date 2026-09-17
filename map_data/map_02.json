@@ -1,0 +1,565 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 1200,
+    "height": 900,
+    "background": "white"
+  },
+  "elements": [
+    {
+      "id": 1,
+      "type": "rect_wall",
+      "top_left": [
+        980,
+        680
+      ],
+      "bottom_right": [
+        1020,
+        720
+      ],
+      "color": "#000000"
+    },
+    {
+      "id": 2,
+      "type": "rect_wall",
+      "top_left": [
+        180,
+        680
+      ],
+      "bottom_right": [
+        220,
+        720
+      ],
+      "color": "#000000"
+    },
+    {
+      "id": 3,
+      "type": "rect_wall",
+      "top_left": [
+        580,
+        420
+      ],
+      "bottom_right": [
+        620,
+        460
+      ],
+      "color": "#000000"
+    },
+    {
+      "id": 4,
+      "type": "rect_wall",
+      "top_left": [
+        980,
+        180
+      ],
+      "bottom_right": [
+        1020,
+        220
+      ],
+      "color": "#000000"
+    },
+    {
+      "id": 5,
+      "type": "rect_wall",
+      "top_left": [
+        180,
+        180
+      ],
+      "bottom_right": [
+        220,
+        220
+      ],
+      "color": "#000000"
+    },
+    {
+      "id": 6,
+      "type": "line_wall",
+      "points": [
+        [
+          0,
+          3
+        ],
+        [
+          1199,
+          3
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 7,
+      "type": "line_wall",
+      "points": [
+        [
+          0,
+          897
+        ],
+        [
+          1199,
+          897
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 8,
+      "type": "line_wall",
+      "points": [
+        [
+          1197,
+          899
+        ],
+        [
+          1197,
+          0
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 9,
+      "type": "line_wall",
+      "points": [
+        [
+          3,
+          899
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 10,
+      "type": "line_wall",
+      "points": [
+        [
+          102,
+          100
+        ],
+        [
+          248,
+          100
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 11,
+      "type": "line_wall",
+      "points": [
+        [
+          1101,
+          248
+        ],
+        [
+          1101,
+          102
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 12,
+      "type": "line_wall",
+      "points": [
+        [
+          450,
+          350
+        ],
+        [
+          751,
+          350
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 13,
+      "type": "line_wall",
+      "points": [
+        [
+          952,
+          101
+        ],
+        [
+          1098,
+          101
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 14,
+      "type": "line_wall",
+      "points": [
+        [
+          101,
+          248
+        ],
+        [
+          101,
+          102
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 15,
+      "type": "line_wall",
+      "points": [
+        [
+          350,
+          298
+        ],
+        [
+          350,
+          202
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 16,
+      "type": "line_wall",
+      "points": [
+        [
+          850,
+          698
+        ],
+        [
+          850,
+          602
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 17,
+      "type": "line_wall",
+      "points": [
+        [
+          102,
+          650
+        ],
+        [
+          248,
+          650
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 18,
+      "type": "line_wall",
+      "points": [
+        [
+          751,
+          548
+        ],
+        [
+          751,
+          352
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 19,
+      "type": "line_wall",
+      "points": [
+        [
+          100,
+          798
+        ],
+        [
+          100,
+          652
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 20,
+      "type": "line_wall",
+      "points": [
+        [
+          450,
+          548
+        ],
+        [
+          450,
+          352
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 21,
+      "type": "line_wall",
+      "points": [
+        [
+          850,
+          298
+        ],
+        [
+          850,
+          202
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 23,
+      "type": "line_wall",
+      "points": [
+        [
+          1100,
+          652
+        ],
+        [
+          1100,
+          798
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 24,
+      "type": "line_wall",
+      "points": [
+        [
+          452,
+          551
+        ],
+        [
+          548,
+          551
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 25,
+      "type": "line_wall",
+      "points": [
+        [
+          652,
+          550
+        ],
+        [
+          748,
+          550
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 26,
+      "type": "line_wall",
+      "points": [
+        [
+          502,
+          151
+        ],
+        [
+          698,
+          151
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 27,
+      "type": "line_wall",
+      "points": [
+        [
+          202,
+          401
+        ],
+        [
+          298,
+          401
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 28,
+      "type": "line_wall",
+      "points": [
+        [
+          350,
+          602
+        ],
+        [
+          350,
+          698
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 29,
+      "type": "line_wall",
+      "points": [
+        [
+          902,
+          400
+        ],
+        [
+          998,
+          400
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 30,
+      "type": "line_wall",
+      "points": [
+        [
+          952,
+          650
+        ],
+        [
+          1098,
+          650
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 32,
+      "type": "disposal_center",
+      "top_left": [
+        529,
+        809
+      ],
+      "bottom_right": [
+        697,
+        894
+      ],
+      "color": "#228B22"
+    },
+    {
+      "id": 33,
+      "type": "start_area",
+      "top_left": [
+        534,
+        680
+      ],
+      "bottom_right": [
+        693,
+        774
+      ],
+      "color": "#1E90FF"
+    },
+    {
+      "id": 34,
+      "type": "line_wall",
+      "points": [
+        [
+          351,
+          202
+        ],
+        [
+          351,
+          298
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 35,
+      "type": "line_wall",
+      "points": [
+        [
+          502,
+          153
+        ],
+        [
+          698,
+          153
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 36,
+      "type": "line_wall",
+      "points": [
+        [
+          1098,
+          102
+        ],
+        [
+          1098,
+          248
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 37,
+      "type": "line_wall",
+      "points": [
+        [
+          902,
+          406
+        ],
+        [
+          998,
+          406
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 38,
+      "type": "line_wall",
+      "points": [
+        [
+          450,
+          345
+        ],
+        [
+          751,
+          345
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    }
+  ]
+}

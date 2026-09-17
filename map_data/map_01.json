@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 1250,
+    "height": 800,
+    "background": "white"
+  },
+  "elements": [
+    {
+      "id": 1,
+      "type": "line_wall",
+      "points": [
+        [
+          0,
+          3
+        ],
+        [
+          1247,
+          3
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 2,
+      "type": "line_wall",
+      "points": [
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          799
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 3,
+      "type": "line_wall",
+      "points": [
+        [
+          0,
+          797
+        ],
+        [
+          1247,
+          797
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 4,
+      "type": "line_wall",
+      "points": [
+        [
+          1247,
+          0
+        ],
+        [
+          1247,
+          799
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 5,
+      "type": "disposal_center",
+      "top_left": [
+        7,
+        7
+      ],
+      "bottom_right": [
+        233,
+        190
+      ],
+      "color": "#228B22"
+    },
+    {
+      "id": 6,
+      "type": "start_area",
+      "top_left": [
+        7,
+        211
+      ],
+      "bottom_right": [
+        233,
+        394
+      ],
+      "color": "#1E90FF"
+    },
+    {
+      "id": 8,
+      "type": "line_wall",
+      "points": [
+        [
+          510,
+          0
+        ],
+        [
+          510,
+          480
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    },
+    {
+      "id": 9,
+      "type": "line_wall",
+      "points": [
+        [
+          910,
+          800
+        ],
+        [
+          910,
+          260
+        ]
+      ],
+      "thickness": 6,
+      "color": "#000000"
+    }
+  ]
+}

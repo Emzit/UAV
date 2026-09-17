@@ -1,0 +1,84 @@
+/mes_dots
+switch_solutions.sh
+all_launch.sh
+solutions_mine
+data_website.txt
+/env
+/docs
+src/swarm_rescue/tools/generated_code.py
+src/swarm_rescue/various
+src/swarm_rescue/solutions_off
+req_u18.txt
+req_u24.txt
+__pycache__
+*.profile
+*.calltree
+swarm_rescue.egg-info
+
+# Temporary and binary files
+*~
+*.py[cod]
+*.so
+*.cfg
+!.isort.cfg
+!setup.cfg
+*.orig
+*.log
+*.pot
+__pycache__/*
+.cache/*
+.*.swp
+*/.ipynb_checkpoints/*
+.DS_Store
+
+# Project files
+.ropeproject
+.project
+.pydevproject
+.settings
+.idea
+.vscode
+tags
+
+# Package files
+*.egg
+*.eggs/
+.installed.cfg
+*.egg-info
+
+# Unittest and coverage
+htmlcov/*
+.coverage
+.coverage.*
+.tox
+junit*.xml
+coverage.xml
+.pytest_cache/
+
+# Build and docs folder/files
+build/*
+dist/*
+sdist/*
+docs/api/*
+docs/_rst/*
+docs/_build/*
+cover/*
+MANIFEST
+
+# Local simulation outputs (demo runs)
+results_swarm_rescue/
+output/
+
+# Local batch-eval fixtures (sample zips, outputs)
+eval_fixtures/
+
+# Per-project virtualenvs
+.venv*/
+.conda*/
+.python-version
+
+.cursor/
+
+# Regenerable output of tests/map_score/score_map.py
+tests/map_score/out/
+tests/map_score/__pycache__/
