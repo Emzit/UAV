@@ -1,5 +1,5 @@
 # Local blue-team run (rescue)
-# bombs_file injected per run by CLI
+# Default test layout: two bombs on open ground in Map01.
 # Output: state recording (.npz) only, no video.
 
 stat_saving_enabled: false
@@ -14,3 +14,4 @@ evaluation_plan:
     config_weight: 1
     number_drones: 10
     zones_config: []
+    bombs_file: config/demo_bombs_map01.json
