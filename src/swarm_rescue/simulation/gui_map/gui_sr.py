@@ -20,6 +20,7 @@ from swarm_rescue.simulation.reporting.bombs_io import (
 )
 from swarm_rescue.simulation.reporting.screen_recorder import ScreenRecorder
 from swarm_rescue.simulation.reporting.state_recorder import StateRecorder
+from swarm_rescue.simulation.reporting.timing_profile import TimingProfile
 from swarm_rescue.simulation.utils.constants import (
     DRONE_INITIAL_HEALTH,
     ENABLE_WINDOW_AUTO_RESIZE,
@@ -119,6 +120,8 @@ class GuiSR(TopDownView):
             manual_bombs_out_path: Optional[str] = None,
             headless: bool = False,
             competition_mode: bool = False,
+            profile_timing: bool = False,
+            profile_control_detail: bool = False,
     ) -> None:
         """
         Initialize the GuiSR graphical user interface.
@@ -143,6 +146,8 @@ class GuiSR(TopDownView):
             enable_visu_noises (bool): Enable visualization of sensor noises.
             filename_video_capture (str): Output filename for video capture.
             filename_state_recording (str): Output filename for state recording (.npz).
+            profile_timing (bool): Collect opt-in per-phase timing statistics.
+            profile_control_detail (bool): Also time blue-controller submethods.
         """
         # Handle automatic window resizing
         size, zoom = self._handle_window_auto_resize(the_map, size, zoom, headless)
@@ -167,6 +172,11 @@ class GuiSR(TopDownView):
 
 
         self._headless = headless
+        self._timing_profile = (
+            TimingProfile() if profile_timing or profile_control_detail else None
+        )
+        self._profile_control_detail = profile_control_detail
+        self._playground.timing_profile = self._timing_profile
         self._window_size = window_size
         self._playground.window.set_size(*self._window_size)
 
@@ -314,11 +324,17 @@ class GuiSR(TopDownView):
         """
         self._playground.window.run()
 
+    @property
+    def timing_profile(self) -> Optional[TimingProfile]:
+        return self._timing_profile
+
 
     def on_draw(self) -> None:
         """
         Render the current frame to the window.
         """
+        profile = self._timing_profile
+        started = time.perf_counter() if profile is not None else 0.0
         # Clear the window
         self._playground.window.clear()
         # Binding the framebuffer object to the window
@@ -328,6 +344,8 @@ class GuiSR(TopDownView):
         # Draw the playground and all the entities in it
         # Copier le contenu de draw() ici ?
         self.draw()
+        if profile is not None:
+            profile.add_draw(time.perf_counter() - started)
 
     def on_update(self, delta_time: float) -> None:
         """
@@ -340,27 +358,46 @@ class GuiSR(TopDownView):
             return
 
         self._elapsed_timestep += 1
+        profile = self._timing_profile
+        if profile is not None:
+            profile.begin_step(self._elapsed_timestep)
 
         if self._elapsed_timestep < 2:
             self._playground.step(all_commands=self._drones_commands,
                                   all_messages=self._messages)
+            if profile is not None:
+                profile.end_step()
             # self._the_map.explored_map.update(self._drones)
             # self._the_map.explored_map._process_positions()
             # self._the_map.explored_map.display()
             return
 
+        started = time.perf_counter() if profile is not None else 0.0
         self._the_map.explored_map.update_drones(self._drones)
+        if profile is not None:
+            profile.add_phase("exploration_tracking", time.perf_counter() - started)
         # self._the_map.explored_map._process_positions()
         # self._the_map.explored_map.display()
 
         # COMPUTE ALL THE MESSAGES
+        started = time.perf_counter() if profile is not None else 0.0
         self._messages = self.collect_all_messages(self._drones)
+        if profile is not None:
+            profile.add_phase("collect_messages", time.perf_counter() - started)
 
         # COMPUTE COMMANDS
         for i in range(self._number_drones):
             self._drones[i].elapsed_walltime = self._elapsed_walltime
             self._drones[i].elapsed_timestep = self._elapsed_timestep
+            if profile is not None and self._profile_control_detail:
+                profile.instrument_drone(self._drones[i], i)
+            started = time.perf_counter() if profile is not None else 0.0
             command = run_control(self._drones[i])
+            if profile is not None:
+                profile.add_control(
+                    i, time.perf_counter() - started,
+                    str(getattr(self._drones[i], "_mode", "unknown")),
+                )
             if self._use_keyboard and i == 0:
                 command = self._keyboardController.control()
 
@@ -376,14 +413,20 @@ class GuiSR(TopDownView):
             self._terminate = True
         else:
             if self._drones:
+                started = time.perf_counter() if profile is not None else 0.0
                 self._drones[0].display()
+                if profile is not None:
+                    profile.add_phase("drone_display", time.perf_counter() - started)
 
             self._playground.step(all_commands=self._drones_commands,
                                   all_messages=self._messages)
 
             # self._playground.debug_draw()
 
+            started = time.perf_counter() if profile is not None else 0.0
             self._visu_noises.update(enable=self._enable_visu_noises)
+            if profile is not None:
+                profile.add_phase("visual_update", time.perf_counter() - started)
             # self._the_map.explored_map.display()
 
             # REWARDS
@@ -428,21 +471,30 @@ class GuiSR(TopDownView):
 
         # Capture state recording (before video capture)
         if self._state_recorder is not None:
+            started = time.perf_counter() if profile is not None else 0.0
             self._state_recorder.capture_state(
                 self._playground, self._elapsed_walltime
             )
+            if profile is not None:
+                profile.add_phase("state_recording", time.perf_counter() - started)
 
         # Capture the frame
         # Au bon endroit ? Il faudrait le mettre avant le draw() ?
         capture_view = self._recording_view if self._recording_view is not None else self
+        started = time.perf_counter() if profile is not None else 0.0
         self.recorder.capture_frame(capture_view)
+        if profile is not None:
+            profile.add_phase("video_capture", time.perf_counter() - started)
 
         self.fps_display.update(display=False)
+        if profile is not None:
+            profile.end_step()
 
         # print("can_grasp: {}, entities: {}".format(self._drone.grasper.can_grasp,
         #                                            self._drone.grasper.grasped_bombs))
 
         if self._terminate:
+            started = time.perf_counter() if profile is not None else 0.0
             self.compute_health_stats()
             self.recorder.end_recording()
             if self._state_recorder is not None:
@@ -457,6 +509,8 @@ class GuiSR(TopDownView):
                 )
             self._last_image = self.get_playground_image()
             arcade.close_window()
+            if profile is not None:
+                profile.add_finalize(time.perf_counter() - started)
 
     def _update_disposal_progress(self, new_reward: int) -> None:
         """Update disposal counters and stop once all bombs are disposed."""

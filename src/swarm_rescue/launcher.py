@@ -260,6 +260,8 @@ class Launcher:
         hide_solution_output: bool = False,
         headless: bool = False,
         competition_mode: bool = False,
+        profile_timing: bool = False,
+        profile_control_detail: bool = False,
     ) -> Optional[Tuple[float, float, int, int, float, int, float, float, bool, bool]]:
         """
         Runs a single round of the session.
@@ -277,6 +279,8 @@ class Launcher:
             hide_solution_output (bool): Whether to hide solution output.
             headless (bool): Whether to run in headless mode.
             competition_mode (bool): If True, disable ground-truth APIs inside control().
+            profile_timing (bool): Print per-phase wall-clock timings for this round.
+            profile_control_detail (bool): Include blue-controller submethod timings.
 
         Returns:
             Optional[Tuple]: Various statistics and results from the round, or None if map class not found.
@@ -355,7 +359,9 @@ class Launcher:
                        manual_bombs_in_path=self.manual_bombs_in,
                        manual_bombs_out_path=self.manual_bombs_out,
                        headless=headless,
-                       competition_mode=competition_mode)
+                       competition_mode=competition_mode,
+                       profile_timing=profile_timing,
+                       profile_control_detail=profile_control_detail)
 
         window_title = (f"Team: {self.team_info.team_number_str}   -   "
                         f"Mode: {round_team_mode.value}   -   "
@@ -404,6 +410,9 @@ class Launcher:
             if hide_solution_output:
                 sys.stdout.close()
                 sys.stdout = original_stdout
+
+        if (profile_timing or profile_control_detail) and my_gui.timing_profile is not None:
+            print(my_gui.timing_profile.format_report())
 
         if has_crashed:
             print(error_msg)
@@ -621,6 +630,8 @@ class Launcher:
         hide_solution_output: bool = False,
         headless: bool = False,
         competition_mode: bool = False,
+        profile_timing: bool = False,
+        profile_control_detail: bool = False,
     ) -> bool:
         """
         Runs the simulation for all evaluation configurations and calculates scores.
@@ -630,6 +641,8 @@ class Launcher:
             hide_solution_output (bool): Hide solution output if True.
             headless (bool): Run in headless mode if True.
             competition_mode (bool): If True, disable ground-truth APIs inside control().
+            profile_timing (bool): Print per-phase wall-clock timings for each round.
+            profile_control_detail (bool): Include blue-controller submethod timings.
 
         Returns:
             bool: True if all rounds completed successfully, False if any crashed.
@@ -668,6 +681,8 @@ class Launcher:
                     hide_solution_output,
                     headless,
                     competition_mode,
+                    profile_timing,
+                    profile_control_detail,
                 )
                 if result is None:
                     return False
@@ -835,6 +850,8 @@ if __name__ == "__main__":
     parser.add_argument("--stop_at_first_crash", "-s", action="store_true", help="Stop the code at first crash")
     parser.add_argument("--hide_solution_output", "-o", action="store_true", help="Hide print output of the solution")
     parser.add_argument("--headless", "-H", action="store_true", help="Run evaluations without opening a display window (suitable for servers)")
+    parser.add_argument("--profile-timing", action="store_true", help="Print per-phase wall-clock timings for every round")
+    parser.add_argument("--profile-control-detail", action="store_true", help="Include blue-controller submethod timings (implies --profile-timing)")
     parser.add_argument(
         "--competition",
         action="store_true",
@@ -915,6 +932,8 @@ if __name__ == "__main__":
         hide_solution_output=args.hide_solution_output,
         headless=args.headless,
         competition_mode=args.competition,
+        profile_timing=args.profile_timing or args.profile_control_detail,
+        profile_control_detail=args.profile_control_detail,
     )
     if not success:
         exit(1)

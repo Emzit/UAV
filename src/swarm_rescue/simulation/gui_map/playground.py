@@ -13,6 +13,7 @@ Examples can be found in :
 
 from __future__ import annotations
 
+import time
 from typing import Dict, List, Optional, Tuple, Union
 
 import arcade
@@ -28,6 +29,7 @@ from swarm_rescue.simulation.drone.drone_part import DronePart
 from swarm_rescue.simulation.drone.interactive_anchored import InteractiveAnchored
 from swarm_rescue.simulation.ray_sensors.ray_compute import RayCompute
 from swarm_rescue.simulation.ray_sensors.ray_sensor import RaySensor
+from swarm_rescue.simulation.reporting.timing_profile import TimingProfile
 from swarm_rescue.simulation.drone.sensor import Sensor, SensorValue
 from swarm_rescue.simulation.elements.embodied import EmbodiedEntity
 from swarm_rescue.simulation.elements.entity import Entity
@@ -132,6 +134,7 @@ class Playground:
 
         self._ray_compute = None
         self._use_shaders = use_shaders
+        self.timing_profile: Optional[TimingProfile] = None
 
     def debug_draw(self, plt_width: int = 10, center: Optional[Tuple[float, float]] = None, size: Optional[Tuple[int, int]] = None) -> None:
         """
@@ -383,20 +386,36 @@ class Playground:
         """
         mess, rew = None, None
 
+        profile = self.timing_profile
+        started = time.perf_counter() if profile is not None else 0.0
         self._pre_step()
+        if profile is not None:
+            profile.add_phase("pre_step", time.perf_counter() - started)
 
+        started = time.perf_counter() if profile is not None else 0.0
         self._apply_commands(all_commands)
+        if profile is not None:
+            profile.add_phase("apply_commands", time.perf_counter() - started)
 
+        started = time.perf_counter() if profile is not None else 0.0
         for _ in range(pymunk_steps):
             self.space.step(1.0 / pymunk_steps)
+        if profile is not None:
+            profile.add_phase("physics", time.perf_counter() - started)
 
         self._compute_observations()
 
+        started = time.perf_counter() if profile is not None else 0.0
         self._post_step()
+        if profile is not None:
+            profile.add_phase("post_step", time.perf_counter() - started)
 
         rew = {agent: agent.reward for agent in self._agents}
         if all_messages:
+            started = time.perf_counter() if profile is not None else 0.0
             mess = self._transmit_messages(all_messages)
+            if profile is not None:
+                profile.add_phase("transmit_messages", time.perf_counter() - started)
 
         self._timestep += 1
 
@@ -499,11 +518,18 @@ class Playground:
         Returns:
             dict: Observations for each agent.
         """
+        profile = self.timing_profile
+        started = time.perf_counter() if profile is not None else 0.0
         if self._ray_compute:
             self._ray_compute.update_sensors()
+        if profile is not None:
+            profile.add_phase("sensor_rays", time.perf_counter() - started)
 
+        started = time.perf_counter() if profile is not None else 0.0
         for agent in self.agents:
             agent.compute_observations()
+        if profile is not None:
+            profile.add_phase("sensor_agents", time.perf_counter() - started)
 
     def reset(self):
         """

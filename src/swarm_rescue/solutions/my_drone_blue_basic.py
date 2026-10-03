@@ -11,6 +11,12 @@ from swarm_rescue.simulation.ray_sensors.drone_semantic_sensor import (
     DroneSemanticSensor,
 )
 from swarm_rescue.simulation.utils.misc_data import MiscData
+from swarm_rescue.solutions.blue_team import (
+    ExplorationConfig,
+    ExplorationInput,
+    ExplorationManager,
+    PoseEstimate,
+)
 from swarm_rescue.solutions.my_drone_rescue_example import (
     MyDroneRescueExample,
     SemanticHit,
@@ -32,6 +38,7 @@ class MyDroneBlueBasic(MyDroneRescueExample):
     """
 
     _MESSAGE_KIND = "blue-basic-v1"
+    _ENABLE_SYSTEMATIC_EXPLORATION = True
 
     # 同一个炸弹在不同传感器射线上会得到略有区别的表面坐标。
     # 因此目标匹配不能用坐标完全相等，而要使用距离阈值。
@@ -89,6 +96,15 @@ class MyDroneBlueBasic(MyDroneRescueExample):
         self._mode = "explore"
         self._breadcrumbs: list[WorldPoint] = []
         self._return_waypoints: list[WorldPoint] = []
+        self._exploration = ExplorationManager(ExplorationConfig(
+            exploration_enabled=self._ENABLE_SYSTEMATIC_EXPLORATION,
+        ))
+        self._last_explore_decision = None
+        self._blue_drone_count = (
+            misc_data.number_drones
+            if misc_data is not None and misc_data.number_drones is not None
+            else 1
+        )
 
         # 错开各机探索周期，并让奇偶编号无人机偏向不同转向方向。
         my_id = int(self.identifier or 0)
@@ -191,6 +207,58 @@ class MyDroneBlueBasic(MyDroneRescueExample):
     # ------------------------------------------------------------------
     # 多机任务分工与探索
     # ------------------------------------------------------------------
+
+    def _control_explore(self, cmd: CommandsDict) -> CommandsDict:
+        """仅在无更高优先级任务时执行分区巡航，失败退回旧探索。"""
+        if not self._ENABLE_SYSTEMATIC_EXPLORATION:
+            return super()._control_explore(cmd)
+
+        step = int(self.elapsed_timestep or self._blue_step)
+        position = self._point_from_sensor(self.measured_gps_position())
+        raw_heading = self.measured_compass_angle()
+        heading = None
+        if raw_heading is not None:
+            try:
+                candidate = float(raw_heading)
+                if math.isfinite(candidate):
+                    heading = candidate
+            except (TypeError, ValueError):
+                pass
+        # 这是定位模块接入前的临时原始测量适配器，不能视为融合位姿。
+        pose = PoseEstimate(
+            position=position,
+            heading=heading,
+            position_variance=25.0 if position is not None else math.inf,
+            heading_variance=(math.radians(4.0) ** 2)
+            if heading is not None else math.inf,
+            source="GPS_DIRECT" if position is not None else "UNINITIALIZED",
+            frame_id="world",
+            step=step,
+            valid=position is not None and heading is not None,
+        )
+        data = ExplorationInput(
+            pose=pose,
+            step=step,
+            world_size=self.size_area,
+            drone_id=int(self.identifier or 0),
+            drone_count=int(self._blue_drone_count),
+            has_bomb_task=self._target_bomb is not None,
+            carrying=bool(self.grasped_bombs()),
+            peer_leases=(),
+        )
+        decision = self._exploration.update(data)
+        self._last_explore_decision = decision
+        if decision.status != "ACTIVE" or decision.goal is None:
+            return super()._control_explore(cmd)
+
+        self._carry_push_steps = 0
+        if self._run_lidar_escape_if_needed(cmd):
+            return cmd
+        goal = decision.goal
+        self._move_toward(
+            goal.position[0], goal.position[1], cmd, use_lidar=True
+        )
+        return cmd
 
     def _is_active_drone(self) -> bool:
         """蓝方基础策略让全部无人机参与任务。"""
@@ -421,6 +489,7 @@ class MyDroneBlueBasic(MyDroneRescueExample):
 
     def _control_carry(self, cmd: CommandsDict) -> CommandsDict:
         """优先沿探索轨迹返航，看到回收区后交给精确投放逻辑。"""
+        
         cmd["grasper"] = 1
         direct = self._find_closest_semantic(
             DroneSemanticSensor.TypeEntity.DISPOSAL_CENTER
